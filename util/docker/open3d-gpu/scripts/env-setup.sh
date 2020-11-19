@@ -11,6 +11,7 @@ UBUNTU_VERSION=${UBUNTU_VERSION:="$(lsb_release -cs)"}
 
 $SUDO apt-get update
 $SUDO apt-get --yes install git software-properties-common
+
 echo "Installing Python3 and setting as default python"
 $SUDO apt-get --yes --no-install-recommends install python3 python3-pip python3-setuptools
 if ! which python || python -V 2>/dev/null | grep -q ' 2.'; then
@@ -22,10 +23,14 @@ fi
 
 # cmake not installed or too old
 if ! which cmake || cmake -P CMakeLists.txt 2>&1 | grep -q "or higher is required"; then
+    # https://apt.kitware.com/
     echo "Installing backported cmake from https://apt.kitware.com/ for Ubuntu $UBUNTU_VERSION"
-    $SUDO apt-key adv --fetch-keys https://apt.kitware.com/keys/kitware-archive-latest.asc
+    $SUDO apt-get --yes install apt-transport-https ca-certificates gnupg wget
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null \
+        | gpg --dearmor - | $SUDO tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
     $SUDO apt-add-repository --yes \
         "deb https://apt.kitware.com/ubuntu/ $UBUNTU_VERSION main"
+    $SUDO apt-get update
     $SUDO apt-get --yes --no-install-recommends install cmake
 fi
 
