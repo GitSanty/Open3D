@@ -31,7 +31,7 @@ if ! which cmake || cmake -P CMakeLists.txt 2>&1 | grep -q "or higher is require
     $SUDO apt-add-repository --yes \
         "deb https://apt.kitware.com/ubuntu/ $UBUNTU_VERSION main"
     $SUDO apt-get update
-    $SUDO apt-get --yes --no-install-recommends install cmake
+    $SUDO apt-get --yes install cmake
 fi
 
 if [ -n "${NVIDIA_DRIVER_VERSION}" ]; then
